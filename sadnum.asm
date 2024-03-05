@@ -1,62 +1,61 @@
-; Dana Louise A. Guillarte - S15
-%include "io64.inc" ; Assuming io64.inc defines GET_DEC and GET_CHAR correctly
-
+%include "io64.inc"
+section .data
+inputNum dq 0
+currDigit dq 0
+remNum dq 0
 section .text
 global main
-
 main:
-  ; Prompt the user for input
-  PRINT_STRING "Enter a positive integer: "
-  NEWLINE
-
-loop:
-  ; Get user input
-  GET_DEC 8, RDI  ; Assuming GET_DEC takes two arguments: register and size
-
-  ; Check if scanf returned an error (non-numeric input)
-  CMP RAX, 0  ; RAX holds the return value of GET_DEC
-  JE invalid_format  ; Jump to error handling if scanf failed
-
-  ; Check if the input is negative
-  CMP RDI, 0
-  JL negative  ; Jump to error handling if less than 0
-
-  ; Input is valid, proceed with your program logic here
-
-  xor rax, rax  ; Clear accumulator for potential return
-  ret
-
-invalid_format:
-  ; Print error message for non-numeric input
-  PRINT_STRING "Invalid input: Please enter a number. "
-  NEWLINE
-
-  jmp loop
-
-negative:
-  ; Print error message for negative input
-  PRINT_STRING "Invalid input: Please enter a positive integer. "
-  NEWLINE
-
-  jmp loop
-
-continuation:
-  ; Prompt for user continuation
-  PRINT_STRING "Do you want to continue (Y/N)? "
-  NEWLINE
-
-  ; Get user input (character)
-  GET_DEC 8, RDI
-
-  ; Check if user wants to continue
-  MOV AL, BYTE [RDI]  ; Move first byte of user input to AL
-  CMP AL, 'Y'  ; Compare AL with character 'Y'
-  JNE exit  ; Jump to exit if not Y
-
-  ; User wants to continue, jump back to the loop
-  jmp loop
-
-exit:
-  ; Exit the program
-  xor rax, rax
-  ret
+    mov rbp, rsp ; for correct debugging
+    
+    ;accept integer input
+    GET_DEC 8, [inputNum]
+    
+    ;initialize values
+    MOV rax, [inputNum] ;container for remaining numbers
+    MOV r8, 10          ;divisor
+    MOV r9, 0           ;accumulator
+    MOV rdx, 0          ;remainder, current num to square
+    
+    ;if rcx is zero, jump to FINISH
+    JRCXZ FINISH
+    
+    ;loop
+    L1:
+        call getSquare
+    loop L1
+   
+   ;after sum has been accumulated:
+   FINISH:
+   NEWLINE
+   PRINT_STRING "The sum is "   ;print sum in r9
+   PRINT_DEC 8, r9
+   xor rax, rax
+   ret
+   
+getSquare:
+    ;rdx -> remainder/current digit; rax-> digits left
+    DIV r8  
+    ;update current digit and digits left
+    MOV qword [currDigit], rdx
+    MOV qword [remNum], rax
+    
+    ;multiplication: MUL src;  RAX*src->RDX:RAX
+    ;mov currDigit to rax
+    MOV rax, [currDigit]    ;copy current digit to rax
+    MUL rax                 ;square rax
+    ADD r9, rax             ;accumulate sum in r9
+    
+    ;print the sum after every cycle/digit
+    PRINT_DEC 8, r9
+    NEWLINE
+    
+    ;update values of rax and rdx to prep for next cycle
+    MOV rdx, 0
+    MOV rax, [remNum]
+    
+    ;update rcx 
+    MOV rcx, rax
+    INC rcx         ;increnent rcx, jic rcx = 0, to avoid rcx=-1=255
+    
+    ret
