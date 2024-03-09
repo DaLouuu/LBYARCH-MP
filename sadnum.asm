@@ -27,7 +27,7 @@ section .text
     L1:
         PRINT_STRING ","
         MOV r9, 0  ; Reset the accumulator before processing each digit
-        call getSquare
+        call GET_SQUARE
         ; print the sum after every cycle/digit
         MOV rax, r9  ; Move the sum from r9 to rax for printing
         PRINT_DEC 8, rax
@@ -37,7 +37,7 @@ section .text
         ; increment loop counter
         INC r10
         ; check if loop counter exceeds 20
-        CMP r10, 20
+        CMP r10, 19
         JGE FINISH
 
         ; continue looping if not yet reached 20 iterations
@@ -73,10 +73,12 @@ section .text
         ; Print the prompt for continuing
         NEWLINE
         PRINT_STRING continuePrompt
-        ; Read user input (assuming it's a single character)
+        
+        ; Read user input
         MOV rax, 0
-        GET_CHAR al
+        GET_CHAR al ; Takes in enter key
         GET_CHAR rax
+        
         ; Check if the input is 'Y' or 'y'
         NEWLINE
         CMP al, 'Y'
@@ -93,7 +95,7 @@ section .text
         xor rax, rax
         ret
 
-    getSquare:
+    GET_SQUARE:
         ; rdx -> remainder/current digit; rax-> digits left
         DIV r8  
         ; update current digit and digits left
@@ -109,6 +111,6 @@ section .text
         ; check if there are more digits to process
         MOV rax, [remNum]      ; Move remaining digits to rax
         CMP rax, 0             ; Check if rax is zero
-        JNZ getSquare          ; If not zero, continue processing digits
+        JNZ GET_SQUARE          ; If not zero, continue processing digits
 
         ret
