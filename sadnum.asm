@@ -96,7 +96,8 @@ section .text
         NEWLINE
         xor rax, rax
         ret
-;function list:
+        
+; ---SUBPROGRAM LIST---
     GET_SQUARE:
         ; rdx -> remainder/current digit; rax-> digits left
         DIV r8  
