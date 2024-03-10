@@ -129,8 +129,8 @@ section .text
         
         PARSE_STR:
             MOV r11b, [strVar + rsi]
-            CMP r11b, 0
-            ;if zero terminate loop and convert to decimal value
+            CMP r11b, 10
+            ;if reached enter key char terminate loop and convert to decimal value
             JE CONVERT
             
             call CHECK_CHAR
@@ -151,6 +151,7 @@ section .text
         
         INVALID:
         PRINT_STRING "Invalid Input!"
+        NEWLINE
         END_INPUT_LOOP:
         ret
     ;checks if character is a number from 0-9 or not
@@ -182,7 +183,7 @@ section .text
             INC rsi                     ; increment loop counter
             MOV r11,0
             MOV r11b, [strVar + rsi]    ; move next digit to 8 bit reg
-            CMP r11b, 0
+            CMP r11b, 10                ; terminate once reach enter key char
             JE end_loopConvert          ; check if reach the end
             
             SUB r11b, 48

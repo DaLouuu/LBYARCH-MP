@@ -25,7 +25,7 @@ ACCEPT_INPUT:
     
     L1:
         MOV r11b, [strVar + rsi]
-        CMP r11b, 0
+        CMP r11b, 10
         ;if zero terminate loop and convert to decimal value
         JE CONVERT
         
