@@ -7,7 +7,6 @@ section .data
     strVar dq 0
     hasChar db 0
     decVar dq 0
-    dummy db 0
 section .text
     global main
 
