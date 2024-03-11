@@ -1,6 +1,5 @@
 %include "io64.inc"
 section .data
-
     currDigit dq 0
     remNum dq 0
     isSadNumber db 0  
@@ -11,7 +10,8 @@ section .data
 
 section .text
     global main
-    main:
+
+main:
     CONTINUE_LOOP:
         call ACCEPT_INPUT
         MOV rax, [decVar]      
@@ -61,6 +61,7 @@ section .text
         
         GET_CHAR al
         GET_CHAR r10b
+        MOV r10b, 0
         
         NEWLINE
         CMP al, 'Y'
@@ -73,7 +74,6 @@ section .text
         JE END_PROGRAM
         JMP CONTINUE_PROMPT
 
-        
     END_PROGRAM:
         NEWLINE
         xor rax, rax
@@ -110,17 +110,17 @@ section .text
     PARSE_STR:
         MOV rsi, 0
 
-        PARSE_LOOP:
-            MOV r11b, [strVar + rsi]
-            CMP r11b, 10
-            JE CONVERT
+    PARSE_LOOP:
+        MOV r11b, [strVar + rsi]
+        CMP r11b, 10
+        JE CONVERT
 
-            CALL CHECK_CHAR
-            CMP byte [hasChar], 1
-            JE INVALID_CHAR
+        CALL CHECK_CHAR
+        CMP byte [hasChar], 1
+        JE INVALID_CHAR
 
-            INC rsi
-            JMP PARSE_LOOP
+        INC rsi
+        JMP PARSE_LOOP
 
     CONVERT:
         CALL CONVERT_DEC
@@ -143,11 +143,11 @@ section .text
         JG character
         MOV byte [hasChar], 0 ; Add this line to reset the flag.
         JMP end
-        character:
-            MOV byte [hasChar], 1
-        end:
-            ret
-            
+    character:
+        MOV byte [hasChar], 1
+    end:
+        ret
+
     CONVERT_DEC:  
         MOV rsi, 0
         MOV r8, 10  
@@ -156,20 +156,20 @@ section .text
         SUB r11, 48
         MOV qword [decVar], r11
         MOV rax, 0
-        loopConvert:
-            MOV al, r11b                
-            INC rsi                     
-            MOV r11,0
-            MOV r11b, [strVar + rsi]    
-            CMP r11b, 10                
-            JE end_loopConvert          
+    loopConvert:
+        MOV al, r11b                
+        INC rsi                     
+        MOV r11,0
+        MOV r11b, [strVar + rsi]    
+        CMP r11b, 10                
+        JE end_loopConvert          
             
-            SUB r11b, 48
-            MOV rax, qword [decVar]
-            MUL r8                      
-            ADD rax, r11                
-            MOV qword [decVar], rax
-            JMP loopConvert
+        SUB r11b, 48
+        MOV rax, qword [decVar]
+        MUL r8                      
+        ADD rax, r11                
+        MOV qword [decVar], rax
+        JMP loopConvert
             
-        end_loopConvert:
+    end_loopConvert:
         ret
