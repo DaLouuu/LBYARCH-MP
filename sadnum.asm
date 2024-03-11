@@ -2,18 +2,20 @@
 section .data
     currDigit dq 0
     remNum dq 0
-    isSadNumber db 0  
+    isSadNumber db 1  
     continuePrompt db "Do you want to continue (Y/N)? ", 0
     strVar dq 0
     hasChar db 0
     decVar dq 0
-
+    dummy db 0
 section .text
     global main
 
 main:
     CONTINUE_LOOP:
-        call ACCEPT_INPUT
+        NEWLINE
+        JMP ACCEPT_INPUT
+        INPUT_DONE:
         MOV rax, [decVar]      
         MOV r8, 10          
         MOV rdx, 0          
@@ -28,31 +30,26 @@ main:
         MOV rax, r9  
         PRINT_DEC 8, rax
         CMP rax, 1
-        JE STOP_LOOP
+        JE STOP_LOOP_DUE_1
+       
         INC r10
         CMP r10, 19 ; Corrected loop termination condition
         JE FINISH
         JMP L1
 
-    STOP_LOOP:
-        CMP rax, 1 ; Corrected comparison
-        JNE SET_SAD_NUMBER_YES
+    STOP_LOOP_DUE_1: ;means that num is not a sad num
         MOV byte [isSadNumber], 0 ; Corrected flag setting
-        JMP FINISH
+        JMP SAD_NUMBER_NO
 
-    SET_SAD_NUMBER_YES:
-        MOV byte [isSadNumber], 1  ; Corrected flag setting
-
-    FINISH:
+   
+    FINISH: ;means num is a sadnum
         NEWLINE
-        MOV rax, [isSadNumber]
-        CMP rax, 1
-        JE SAD_NUMBER_YES
-        PRINT_STRING "Sad Number: No"
+        PRINT_STRING "Sad Number: Yes"
         JMP CONTINUE_PROMPT
 
-    SAD_NUMBER_YES:
-        PRINT_STRING "Sad Number: Yes"
+    SAD_NUMBER_NO:
+        NEWLINE
+        PRINT_STRING "Sad Number: No"
         JMP CONTINUE_PROMPT
 
     CONTINUE_PROMPT:
@@ -72,12 +69,14 @@ main:
         JE END_PROGRAM
         CMP al, 'n'
         JE END_PROGRAM
+        
         JMP CONTINUE_PROMPT
 
     END_PROGRAM:
-        NEWLINE
-        xor rax, rax
-        ret
+    NEWLINE
+    
+    xor rax, rax
+    ret
         
     GET_SQUARE:
         DIV r8  
@@ -134,7 +133,7 @@ main:
         JMP CONTINUE_PROMPT  ; Jump to the continuation prompt
 
     END_INPUT_LOOP:
-        ret
+        JMP INPUT_DONE
 
     CHECK_CHAR:
         CMP r11b, 48
