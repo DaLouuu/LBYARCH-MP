@@ -1,0 +1,4 @@
+﻿  Performing Custom Build Tools
+  asmfunc.asm:13: warning: label alone on a line without a colon might be in error [-w+label-orphan]
+  main.c
+  x86_64_GuillarteSo.vcxproj -> C:\Users\Dana\Desktop\Personal\School\DLSU\Acads\2023 - 2024\Term 2\LBYARCH\Assessments\LBYARCH-MP\x86_64_GuillarteSo\x64\Debug\x86_64_GuillarteSo.exe
